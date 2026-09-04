@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tricom FS — Consulta personalizada de CBD espectro completo</title>
+<meta name="description" content="Consulta personalizada con Marisol Zepeda Janet, especialista en medicina cannábica, antes de recomendar cualquier producto de CBD.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --cream:#F3EEE2;
+    --cream-deep:#EAE1CB;
+    --green:#1E3B2C;
+    --green-deep:#132A1E;
+    --amber:#C48A3E;
+    --amber-soft:#E4C592;
+    --ink:#26241D;
+    --line: rgba(30,59,44,0.16);
+    --line-on-dark: rgba(243,238,226,0.22);
+    --ease: cubic-bezier(.22,1,.36,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-weight:400;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    margin:0;
+    color:var(--green);
+  }
+  em{ font-style:italic; font-weight:400; color:var(--amber); }
+
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 28px; }
+  section{ position:relative; }
+
+  ::selection{ background:var(--amber-soft); color:var(--green-deep); }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+  .reveal-stagger.in > *{ transition-delay:calc(var(--i, 0) * 90ms); }
+
+  /* ================= NAV ================= */
+  .nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(243,238,226,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{ display:flex; align-items:center; justify-content:space-between; padding-top:16px; padding-bottom:16px; }
+  .brand{ font-family:'Fraunces', serif; font-weight:600; font-size:1.15rem; color:var(--green); letter-spacing:-0.01em; }
+  .brand span{ color:var(--amber); }
+  .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; font-size:0.92rem; }
+  .nav-links a{ text-decoration:none; color:var(--green); opacity:0.8; transition:opacity .25s; }
+  .nav-links a:hover{ opacity:1; }
+  .nav-cta{
+    font-size:0.88rem; padding:10px 20px; border-radius:999px;
+    background:var(--green); color:var(--cream); text-decoration:none;
+    transition:background .25s var(--ease), transform .25s var(--ease);
+  }
+  .nav-cta:hover{ background:var(--green-deep); transform:translateY(-1px); }
+  @media (max-width:760px){ .nav-links{ display:none; } }
+
+  /* ================= HERO ================= */
+  .hero{
+    background:radial-gradient(1200px 700px at 78% -10%, #23492f 0%, var(--green) 46%, var(--green-deep) 100%);
+    color:var(--cream);
+    overflow:hidden;
+    padding:96px 0 120px;
+  }
+  .hero-plate{
+    position:absolute; inset:0; opacity:0.10; pointer-events:none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, var(--cream) 1px, transparent 0),
+      radial-gradient(1px 1px at 60% 70%, var(--cream) 1px, transparent 0),
+      radial-gradient(1px 1px at 85% 20%, var(--cream) 1px, transparent 0);
+    background-size: 340px 340px, 260px 260px, 300px 300px;
+    mix-blend-mode:overlay;
+  }
+  .hero-grid{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--amber-soft); margin-bottom:22px;
+    opacity:0; transform:translateY(10px);
+    animation:rise .9s var(--ease) .15s forwards;
+  }
+  .eyebrow::before{ content:""; width:26px; height:1px; background:var(--amber-soft); }
+  .hero h1{
+    color:var(--cream); font-size:clamp(2.4rem, 4.6vw, 3.85rem); line-height:1.06;
+    opacity:0; transform:translateY(18px);
+    animation:rise 1s var(--ease) .32s forwards;
+  }
+  .hero p.lede{
+    margin-top:22px; max-width:480px; font-size:1.08rem; line-height:1.65;
+    color:rgba(243,238,226,0.82); font-weight:300;
+    opacity:0; transform:translateY(16px);
+    animation:rise 1s var(--ease) .5s forwards;
+  }
+  .hero-ctas{
+    display:flex; gap:16px; margin-top:38px; flex-wrap:wrap;
+    opacity:0; transform:translateY(16px);
+    animation:rise 1s var(--ease) .66s forwards;
+  }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  .btn{
+    font-family:'Work Sans', sans-serif; font-size:0.95rem; font-weight:500;
+    padding:14px 28px; border-radius:999px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:10px; border:1px solid transparent;
+    transition:transform .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
+  }
+  .btn-amber{ background:var(--amber); color:var(--green-deep); }
+  .btn-amber:hover{ transform:translateY(-2px); background:#d59a4d; }
+  .btn-ghost{ border-color:var(--line-on-dark); color:var(--cream); }
+  .btn-ghost:hover{ border-color:var(--cream); transform:translateY(-2px); }
+
+  /* --- signature: dropper drop --- */
+  .drop-stage{ position:relative; height:420px; display:flex; align-items:center; justify-content:center; }
+  .drop-wrap{ position:relative; width:180px; }
+  .dropper-neck{
+    width:6px; height:64px; margin:0 auto;
+    background:linear-gradient(var(--line-on-dark), rgba(243,238,226,0.05));
+    border-radius:3px 3px 0 0;
+    opacity:0; animation:fadeIn .6s ease .8s forwards;
+  }
+  .droplet{
+    width:64px; height:80px; margin:0 auto;
+    position:relative;
+    animation:fall 1.1s var(--ease) .9s both, bob 4.5s ease-in-out 2.1s infinite;
+  }
+  .droplet svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 18px 30px rgba(0,0,0,0.35)); }
+  .drop-shadow{
+    width:70px; height:14px; border-radius:50%; margin:14px auto 0;
+    background:radial-gradient(closest-side, rgba(0,0,0,0.35), transparent);
+    opacity:0; animation:fadeIn .6s ease 1.9s forwards;
+    transform-origin:center;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-140px) scale(0.7); opacity:0; }
+    60%{ opacity:1; }
+    100%{ transform:translateY(0) scale(1); opacity:1; }
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+  @keyframes fadeIn{ to{ opacity:1; } }
+  .drop-ring{
+    position:absolute; inset:0; margin:auto; width:300px; height:300px;
+    border:1px solid var(--line-on-dark); border-radius:50%;
+    opacity:0; animation:ringIn 1.4s var(--ease) 1.1s forwards;
+  }
+  @keyframes ringIn{ from{ opacity:0; transform:scale(0.85); } to{ opacity:1; transform:scale(1); } }
+
+  /* ---- credential strip ---- */
+  .credentials{ background:var(--green-deep); color:var(--cream); }
+  .cred-row{
+    display:flex; flex-wrap:wrap; gap:0;
+    padding:26px 0;
+  }
+  .cred-item{
+    flex:1 1 240px; padding:6px 28px; font-size:0.86rem; line-height:1.5;
+    border-left:1px solid var(--line-on-dark); color:rgba(243,238,226,0.78);
+  }
+  .cred-item:first-child{ border-left:none; }
+  .cred-item strong{ display:block; color:var(--cream); font-weight:500; margin-bottom:2px; font-family:'Fraunces',serif; font-size:1rem;}
+  @media (max-width:760px){ .cred-item{ border-left:none; border-top:1px solid var(--line-on-dark); padding:16px 0; } .cred-item:first-child{ border-top:none; } }
+
+  /* ================= SOBRE MARISOL ================= */
+  .about{ padding:120px 0; }
+  .about-grid{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:72px; align-items:center; }
+  .cert-frame{
+    position:relative; padding:14px; background:#fff; border:1px solid var(--line);
+    box-shadow:0 30px 60px -30px rgba(30,59,44,0.35);
+    transform:rotate(-2deg); transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .cert-frame:hover{ transform:rotate(0deg) translateY(-4px); box-shadow:0 40px 70px -30px rgba(30,59,44,0.45); }
+  .cert-frame img{ width:100%; height:auto; }
+  .cert-caption{
+    font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--green); opacity:0.65; margin-top:16px; text-align:center;
+  }
+  .section-eyebrow{
+    font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--amber); margin-bottom:16px; display:block;
+  }
+  .about h2{ font-size:clamp(1.8rem, 3vw, 2.5rem); margin-bottom:22px; }
+  .about p{ color:var(--ink); opacity:0.82; font-size:1.02rem; margin:0 0 16px; max-width:52ch; }
+  .about-signature{ font-family:'Fraunces', serif; font-style:italic; color:var(--green); font-size:1.15rem; margin-top:26px; }
+  .about-signature span{ display:block; font-family:'Work Sans',sans-serif; font-style:normal; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--amber); margin-top:6px; }
+
+  @media (max-width:860px){ .about-grid, .hero-grid{ grid-template-columns:1fr; } .drop-stage{ height:280px; } .hero{ padding:72px 0 80px; } }
+
+  /* ================= PROCESO ================= */
+  .process{ background:var(--cream-deep); padding:110px 0; }
+  .process-head{ max-width:560px; margin-bottom:64px; }
+  .process-head h2{ font-size:clamp(1.8rem,3vw,2.5rem); }
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+  .step{ position:relative; padding:0 26px 0 0; }
+  .step + .step{ border-left:1px solid var(--line); padding-left:26px; }
+  .step-num{ font-family:'Fraunces',serif; font-size:0.95rem; color:var(--amber); margin-bottom:18px; letter-spacing:0.02em; }
+  .step h3{ font-size:1.1rem; margin-bottom:10px; }
+  .step p{ font-size:0.92rem; color:var(--ink); opacity:0.75; margin:0; }
+  @media (max-width:900px){ .steps{ grid-template-columns:1fr 1fr; row-gap:40px; } .step + .step{ border-left:none; padding-left:0; } .step:nth-child(even){ border-left:1px solid var(--line); padding-left:26px; } }
+  @media (max-width:560px){ .steps{ grid-template-columns:1fr; } .step:nth-child(even){ border-left:none; padding-left:0; } }
+
+  /* ================= EL ACEITE ================= */
+  .oil{ padding:110px 0; }
+  .oil-grid{ display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+  .oil h2{ font-size:clamp(1.8rem,3vw,2.5rem); margin-bottom:20px; }
+  .oil p{ color:var(--ink); opacity:0.82; max-width:50ch; margin:0 0 16px; }
+  .oil-list{ list-style:none; margin:32px 0 0; padding:0; display:grid; gap:18px; }
+  .oil-list li{ display:flex; gap:16px; align-items:flex-start; font-size:0.96rem; }
+  .oil-dot{ width:8px; height:8px; border-radius:50%; background:var(--amber); margin-top:8px; flex:none; }
+  .disclaimer{
+    margin-top:30px; padding:18px 20px; border:1px solid var(--line); border-radius:10px;
+    font-size:0.82rem; color:var(--ink); opacity:0.7; background:rgba(196,138,62,0.06);
+  }
+
+  /* ================= BOOKING ================= */
+  .booking{ background:var(--green); color:var(--cream); padding:120px 0; }
+  .booking-head{ max-width:600px; margin-bottom:56px; }
+  .booking-head .section-eyebrow{ color:var(--amber-soft); }
+  .booking-head h2{ color:var(--cream); font-size:clamp(1.8rem,3vw,2.5rem); }
+  .booking-head p{ color:rgba(243,238,226,0.75); margin-top:16px; font-size:1.02rem; }
+
+  .booking-card{
+    background:var(--cream); color:var(--ink); border-radius:20px; padding:36px;
+    box-shadow:0 50px 90px -40px rgba(0,0,0,0.5);
+  }
+  .bk-steps{ display:flex; gap:10px; margin-bottom:28px; font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--green); opacity:0.55;}
+  .bk-steps b{ opacity:1; color:var(--amber); }
+  .bk-panel{ display:none; }
+  .bk-panel.active{ display:block; animation:panelIn .45s var(--ease); }
+  @keyframes panelIn{ from{ opacity:0; transform:translateX(14px);} to{ opacity:1; transform:none; } }
+
+  .bk-state{ font-size:0.95rem; opacity:0.7; padding:8px 0; }
+
+  .day-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(148px,1fr)); gap:12px; margin-bottom:28px; }
+  .day-btn{
+    border:1px solid var(--line); background:#fff; border-radius:12px; padding:14px 16px; text-align:left;
+    cursor:pointer; font-family:'Work Sans',sans-serif; transition:border-color .25s, transform .25s, background .25s;
+  }
+  .day-btn:hover{ border-color:var(--amber); transform:translateY(-2px); }
+  .day-btn.sel{ border-color:var(--amber); background:var(--amber-soft); }
+  .day-btn .dow{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--amber); display:block; margin-bottom:4px; }
+  .day-btn .dnum{ font-family:'Fraunces',serif; font-size:1.35rem; color:var(--green); }
+  .day-btn .dcount{ font-size:0.74rem; opacity:0.6; margin-top:2px; }
+
+  .slot-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:10px; margin-bottom:24px; }
+  .slot-btn{
+    border:1px solid var(--line); background:#fff; border-radius:999px; padding:10px 6px; text-align:center;
+    cursor:pointer; font-size:0.9rem; transition:border-color .2s, background .2s, transform .2s;
+  }
+  .slot-btn:hover{ border-color:var(--amber); transform:translateY(-1px); }
+  .slot-btn.sel{ background:var(--green); color:var(--cream); border-color:var(--green); }
+
+  .back-link{ background:none; border:none; color:var(--green); opacity:0.6; font-size:0.86rem; cursor:pointer; padding:0; margin-bottom:20px; font-family:'Work Sans',sans-serif; text-decoration:underline; }
+  .back-link:hover{ opacity:1; }
+
+  .selected-slot-pill{
+    display:inline-flex; align-items:center; gap:10px; background:var(--cream-deep); border-radius:999px;
+    padding:8px 18px; font-size:0.88rem; margin-bottom:24px; color:var(--green);
+  }
+  .selected-slot-pill b{ color:var(--amber); }
+
+  form.bk-form{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  form.bk-form .full{ grid-column:1/-1; }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:0.82rem; color:var(--green); font-weight:500; }
+  .field label .opt{ opacity:0.5; font-weight:400; }
+  .field input, .field textarea{
+    font-family:'Work Sans',sans-serif; font-size:0.95rem; padding:12px 14px;
+    border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+    transition:border-color .2s;
+  }
+  .field input:focus, .field textarea:focus{ border-color:var(--amber); outline:none; }
+  .field textarea{ resize:vertical; min-height:80px; font-family:'Work Sans',sans-serif; }
+  .consent{ display:flex; gap:10px; align-items:flex-start; font-size:0.82rem; opacity:0.75; }
+  .consent input{ margin-top:3px; }
+
+  .bk-submit-row{ display:flex; align-items:center; gap:18px; margin-top:8px; }
+  .bk-error{ color:#a13d2d; font-size:0.86rem; }
+
+  .confirm-panel{ text-align:center; padding:20px 0; }
+  .confirm-mark{
+    width:56px; height:56px; border-radius:50%; background:var(--amber); color:var(--green-deep);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 22px; font-size:1.4rem;
+    animation:popIn .5s var(--ease);
+  }
+  @keyframes popIn{ from{ transform:scale(0); } to{ transform:scale(1); } }
+  .confirm-panel h3{ font-size:1.4rem; margin-bottom:10px; }
+  .confirm-panel p{ opacity:0.75; max-width:44ch; margin:0 auto; }
+
+  @media (max-width:640px){ form.bk-form{ grid-template-columns:1fr; } .booking-card{ padding:24px; } }
+
+  /* ================= FOOTER ================= */
+  footer{ background:var(--green-deep); color:rgba(243,238,226,0.65); padding:56px 0 36px; font-size:0.86rem; }
+  .foot-top{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; padding-bottom:32px; border-bottom:1px solid var(--line-on-dark); margin-bottom:24px; }
+  .foot-brand{ font-family:'Fraunces',serif; color:var(--cream); font-size:1.1rem; }
+  .foot-legal{ max-width:640px; opacity:0.75; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand">Tricom<span>·</span>FS</div>
+    <ul class="nav-links">
+      <li><a href="#sobre-marisol">Sobre Marisol</a></li>
+      <li><a href="#proceso">Cómo funciona</a></li>
+      <li><a href="#el-aceite">El aceite</a></li>
+    </ul>
+    <a href="#agendar" class="nav-cta">Agendar consulta</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-plate"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Consulta médica antes que producto</span>
+      <h1>El acompañamiento cannábico empieza con <em>una conversación</em>, no con una compra.</h1>
+      <p class="lede">Marisol Zepeda Janet te escucha, revisa tu historial y te orienta con criterio clínico antes de sugerir cualquier aceite de CBD espectro completo.</p>
+      <div class="hero-ctas">
+        <a href="#agendar" class="btn btn-amber">Agenda tu consulta</a>
+        <a href="#sobre-marisol" class="btn btn-ghost">Conoce a Marisol</a>
+      </div>
+    </div>
+    <div class="drop-stage" aria-hidden="true">
+      <div class="drop-ring"></div>
+      <div class="drop-wrap">
+        <div class="dropper-neck"></div>
+        <div class="droplet">
+          <svg viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 2C32 2 58 40 58 56C58 69.2548 46.2548 79 32 79C17.7452 79 6 69.2548 6 56C6 40 32 2 32 2Z" fill="url(#dropGrad)"/>
+            <ellipse cx="24" cy="46" rx="7" ry="10" fill="#F3EEE2" fill-opacity="0.35"/>
+            <defs>
+              <linearGradient id="dropGrad" x1="32" y1="2" x2="32" y2="79" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E4C592"/>
+                <stop offset="1" stop-color="#C48A3E"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="drop-shadow"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="credentials">
+  <div class="wrap cred-row reveal reveal-stagger" id="cred-row">
+    <div class="cred-item" style="--i:0"><strong>Diplomado en Medicina Cannábica</strong>AMEDCANN, 120 horas de formación clínica.</div>
+    <div class="cred-item" style="--i:1"><strong>Reconocimiento oficial</strong>Esclerosis Múltiple Jalisco A.C.</div>
+    <div class="cred-item" style="--i:2"><strong>Consulta antes que venta</strong>Ningún producto se sugiere sin revisar tu caso.</div>
+  </div>
+</section>
+
+<section class="about" id="sobre-marisol">
+  <div class="wrap about-grid">
+    <div class="reveal">
+      <div class="cert-frame">
+        <img src="diploma.jpeg" alt="Diploma de Marisol Zepeda Janet, Diplomado en Medicina Cannábica, AMEDCANN">
+      </div>
+      <div class="cert-caption">Diplomado en Medicina Cannábica · AMEDCANN</div>
+    </div>
+    <div class="reveal">
+      <span class="section-eyebrow">Sobre Marisol</span>
+      <h2>Especialista en medicina cannábica, con criterio clínico en cada consulta.</h2>
+      <p>Marisol Zepeda Janet cursó el Diplomado en Medicina Cannábica de AMEDCANN (120 horas), una formación centrada en el uso responsable e informado del cannabis con fines de bienestar.</p>
+      <p>Su trabajo cuenta con el reconocimiento de Esclerosis Múltiple Jalisco A.C., resultado de años acompañando a personas que buscan alternativas complementarias con orientación profesional, nunca por cuenta propia.</p>
+      <p>Cada consulta parte de tu historial, tus medicamentos actuales y tus síntomas — no de un catálogo. El producto, si aplica, llega después.</p>
+      <div class="about-signature">"Primero se escucha, después se recomienda."
+        <span>Marisol Zepeda Janet — Tricom FS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="process" id="proceso">
+  <div class="wrap">
+    <div class="process-head reveal">
+      <span class="section-eyebrow">Cómo funciona</span>
+      <h2>Cuatro pasos, una sola cita.</h2>
+    </div>
+    <div class="steps reveal reveal-stagger">
+      <div class="step" style="--i:0">
+        <div class="step-num">01</div>
+        <h3>Agenda tu horario</h3>
+        <p>Elige un espacio disponible el sábado o domingo, directo en esta página.</p>
+      </div>
+      <div class="step" style="--i:1">
+        <div class="step-num">02</div>
+        <h3>Comparte tu historial</h3>
+        <p>Un formulario breve sobre tu condición, medicamentos y alergias — queda solo con Marisol.</p>
+      </div>
+      <div class="step" style="--i:2">
+        <div class="step-num">03</div>
+        <h3>Consulta con Marisol</h3>
+        <p>Revisa tu caso con criterio clínico antes de sugerir cualquier producto.</p>
+      </div>
+      <div class="step" style="--i:3">
+        <div class="step-num">04</div>
+        <h3>Recibe tu plan</h3>
+        <p>Orientación personalizada sobre si el CBD espectro completo tiene sentido para ti.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oil" id="el-aceite">
+  <div class="wrap oil-grid">
+    <div class="reveal">
+      <span class="section-eyebrow">El aceite</span>
+      <h2>CBD espectro completo, con trazabilidad clara.</h2>
+      <p>Trabajamos con aceite de CBD espectro completo, formulado para acompañar procesos de bienestar bajo supervisión. Estudios preliminares sugieren beneficios en el manejo de ciertos síntomas — la evidencia sigue evolucionando, y por eso cada caso se revisa de forma individual.</p>
+      <p>No sustituye tratamientos médicos indicados por tu especialista tratante. Se integra como un complemento, siempre bajo orientación.</p>
+    </div>
+    <div class="reveal">
+      <ul class="oil-list">
+        <li><span class="oil-dot"></span><span><strong>Espectro completo</strong> — conserva el perfil natural de cannabinoides y terpenos de la planta.</span></li>
+        <li><span class="oil-dot"></span><span><strong>Dosis orientada por consulta</strong> — la concentración se ajusta según tu caso, no al revés.</span></li>
+        <li><span class="oil-dot"></span><span><strong>Seguimiento</strong> — Marisol da seguimiento a tu respuesta tras el inicio del acompañamiento.</span></li>
+      </ul>
+      <div class="disclaimer">Este contenido es informativo y no constituye una promesa de resultado. La consulta con Marisol determina si el CBD es adecuado para tu caso particular.</div>
+    </div>
+  </div>
+</section>
+
+<section class="booking" id="agendar">
+  <div class="wrap">
+    <div class="booking-head reveal">
+      <span class="section-eyebrow">Agenda tu consulta</span>
+      <h2>Sábados y domingos, 9:00–17:00.</h2>
+      <p>Elige un horario disponible en el calendario real de Marisol. Al confirmar, te llegará la invitación directo a tu correo.</p>
+    </div>
+
+    <div class="booking-card reveal" id="booking-card">
+      <div class="bk-steps" id="bk-steps">
+        <span id="bk-step-1"><b>1</b> Horario</span>
+        <span>→</span>
+        <span id="bk-step-2">2 Tu historial</span>
+        <span>→</span>
+        <span id="bk-step-3">3 Confirmación</span>
+      </div>
+
+      <!-- Panel 1: días / horarios -->
+      <div class="bk-panel active" id="panel-days">
+        <div id="bk-loading" class="bk-state">Consultando disponibilidad real del calendario…</div>
+        <div id="bk-days-wrap" style="display:none">
+          <div class="day-list" id="day-list"></div>
+          <div id="slots-wrap" style="display:none">
+            <button class="back-link" id="back-to-days">← Elegir otro día</button>
+            <div class="slot-list" id="slot-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: formulario historial -->
+      <div class="bk-panel" id="panel-form">
+        <button class="back-link" id="back-to-slots">← Cambiar horario</button>
+        <div class="selected-slot-pill" id="selected-slot-pill"></div>
+        <form class="bk-form" id="patient-form">
+          <div class="field"><label>Nombre completo</label><input type="text" name="name" required></div>
+          <div class="field"><label>Correo electrónico</label><input type="email" name="email" required></div>
+          <div class="field"><label>Teléfono</label><input type="tel" name="phone" required></div>
+          <div class="field"><label>Edad <span class="opt">(opcional)</span></label><input type="number" name="age" min="1" max="120"></div>
+          <div class="field full"><label>Motivo de consulta / condición</label><input type="text" name="condition" required placeholder="Ej. dolor crónico, ansiedad, insomnio…"></div>
+          <div class="field full"><label>Medicamentos actuales <span class="opt">(opcional)</span></label><input type="text" name="medications"></div>
+          <div class="field full"><label>Alergias <span class="opt">(opcional)</span></label><input type="text" name="allergies"></div>
+          <div class="field full"><label>Notas adicionales <span class="opt">(opcional)</span></label><textarea name="notes"></textarea></div>
+          <div class="field full consent">
+            <input type="checkbox" id="consent" required>
+            <label for="consent">Autorizo que esta información se comparta con Marisol Zepeda Janet únicamente para fines de esta consulta.</label>
+          </div>
+          <div class="field full bk-submit-row">
+            <button type="submit" class="btn btn-amber" id="submit-btn">Confirmar cita</button>
+            <span class="bk-error" id="form-error"></span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Panel 3: confirmación -->
+      <div class="bk-panel" id="panel-confirm">
+        <div class="confirm-panel">
+          <div class="confirm-mark">✓</div>
+          <h3>Tu cita quedó agendada</h3>
+          <p id="confirm-detail">Te llegó una invitación a tu correo — acéptala para que se agregue a tu propio calendario (Google, Outlook o Apple).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">Tricom FS</div>
+      <div class="foot-legal">Contenido informativo, no sustituye diagnóstico ni tratamiento médico. El CBD no cura enfermedades; su uso se evalúa caso por caso en consulta con Marisol Zepeda Janet.</div>
+    </div>
+    <div>© <span id="year"></span> Tricom FS. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+<script src="booking.js"></script>
+</body>
+</html>
