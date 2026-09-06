@@ -612,15 +612,16 @@
       duration: CYCLE,
       keyframes: {
         '0%':   { translateY: 0,  scaleY: 0.4,  scaleX: 0.85, opacity: 0 },
-        '5%':   { opacity: 1 },
-        '16%':  { translateY: 4,  scaleY: 1.3,  scaleX: 0.82 },   // bead swells at the tip
-        '23%':  { translateY: 10, scaleY: 1.05, scaleX: 0.96 },   // detaches
-        '36%':  { translateY: 42, scaleY: 1,    scaleX: 1 },
-        '48%':  { translateY: 78, scaleY: 0.97, scaleX: 1.03 },
-        '54%':  { translateY: 90, scaleY: 0.68, scaleX: 1.32, opacity: 1 },    // impact
-        '59%':  { translateY: 94, scaleY: 0.28, scaleX: 1.16, opacity: 0.35 }, // merges into the pool
-        '64%':  { translateY: 94, scaleY: 0.12, scaleX: 1,    opacity: 0 },
-        '100%': { translateY: 94, scaleY: 0.12, scaleX: 1,    opacity: 0 },
+        '5%':   { opacity: 1, ease: 'linear' },
+        '16%':  { translateY: 4,  scaleY: 1.3,  scaleX: 0.82, ease: 'outSine' },  // surface tension: slow bulge growth
+        '23%':  { translateY: 10, scaleY: 1.05, scaleX: 0.96, ease: 'inBack(1.4)' }, // pinches off with a little snap-back
+        '36%':  { translateY: 42, scaleY: 1,    scaleX: 1,    ease: 'inQuad' },   // gravity: accelerating fall
+        '48%':  { translateY: 78, scaleY: 0.97, scaleX: 1.03, ease: 'inQuad' },   // still accelerating
+        '54%':  { translateY: 90, scaleY: 0.68, scaleX: 1.32, opacity: 1, ease: 'inExpo' }, // sharp final approach + impact splat
+        '60%':  { translateY: 91, scaleY: 1.05, scaleX: 0.95, opacity: 0.5, ease: 'outElastic(1.1, .3)' }, // surface tension rebounds before settling
+        '68%':  { translateY: 92, scaleY: 0.8,  scaleX: 1,    opacity: 0.15, ease: 'outSine' }, // settles, quickly dissolving
+        '78%':  { translateY: 93, scaleY: 0.3,  scaleX: 1,    opacity: 0,    ease: 'outSine' },
+        '100%': { translateY: 93, scaleY: 0.12, scaleX: 1,    opacity: 0 },
       },
     }, 0);
 
@@ -628,20 +629,20 @@
       duration: CYCLE,
       keyframes: {
         '0%':  { scale: 1, opacity: 0.8 },
-        '52%': { scale: 1, opacity: 0.8 },
-        '57%': { scale: 1.2, opacity: 1 },
-        '78%': { scale: 1, opacity: 0.75 },
-        '100%':{ scale: 1, opacity: 0.75 },
+        '52%': { scale: 1, opacity: 0.8, ease: 'linear' },
+        '57%': { scale: 1.2, opacity: 1, ease: 'outExpo' },  // snappy flash on impact
+        '78%': { scale: 1, opacity: 0.75, ease: 'outSine' },
+        '100%':{ scale: 1, opacity: 0.75, ease: 'linear' },
       },
     }, 0);
 
     const rippleKeyframes = {
       '0%':  { scale: 0.2, opacity: 0 },
-      '53%': { scale: 0.2, opacity: 0 },
-      '57%': { scale: 0.5, opacity: 0.95 },
-      '72%': { scale: 1.3, opacity: 0.65 },
-      '90%': { scale: 2.1, opacity: 0 },
-      '100%':{ scale: 2.1, opacity: 0 },
+      '53%': { scale: 0.2, opacity: 0, ease: 'linear' },
+      '57%': { scale: 0.5, opacity: 0.95, ease: 'outExpo' },
+      '72%': { scale: 1.3, opacity: 0.65, ease: 'outQuad' },  // real ripples decelerate as they spread
+      '90%': { scale: 2.1, opacity: 0, ease: 'outSine' },
+      '100%':{ scale: 2.1, opacity: 0, ease: 'linear' },
     };
     tl.add('.ripple-1', { duration: CYCLE, keyframes: rippleKeyframes }, 0);
     tl.add('.ripple-2', { duration: CYCLE, keyframes: rippleKeyframes }, 120); // staggered second ripple
