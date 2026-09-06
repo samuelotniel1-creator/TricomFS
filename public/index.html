@@ -295,6 +295,11 @@
 
   form.bk-form{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
   form.bk-form .full{ grid-column:1/-1; }
+  .bk-form-divider{ padding-top:6px; margin-top:6px; border-top:1px solid var(--line); }
+  .bk-form-divider span{
+    display:inline-block; font-family:'Fraunces',serif; font-weight:600; font-size:0.95rem;
+    color:var(--green); padding-left:12px; border-left:3px solid var(--amber);
+  }
   .field{ display:flex; flex-direction:column; gap:6px; }
   .field label{ font-size:0.82rem; color:var(--green); font-weight:500; }
   .field label .opt{ opacity:0.5; font-weight:400; }
@@ -505,11 +510,17 @@
           <div class="field"><label>Nombre completo</label><input type="text" name="name" required></div>
           <div class="field"><label>Correo electrónico</label><input type="email" name="email" required></div>
           <div class="field"><label>Teléfono</label><input type="tel" name="phone" required></div>
-          <div class="field"><label>Edad <span class="opt">(opcional)</span></label><input type="number" name="age" min="1" max="120"></div>
-          <div class="field full"><label>Motivo de consulta / condición</label><input type="text" name="condition" required placeholder="Ej. dolor crónico, ansiedad, insomnio…"></div>
-          <div class="field full"><label>Medicamentos actuales <span class="opt">(opcional)</span></label><input type="text" name="medications"></div>
-          <div class="field full"><label>Alergias <span class="opt">(opcional)</span></label><input type="text" name="allergies"></div>
-          <div class="field full"><label>Notas adicionales <span class="opt">(opcional)</span></label><textarea name="notes"></textarea></div>
+          <div class="field"><label>Edad</label><input type="number" name="age" required min="1" max="120"></div>
+
+          <div class="field full bk-form-divider"><span>Cuestionario de salud — Tricom FS Oil</span></div>
+
+          <div class="field"><label>Peso</label><input type="text" name="weight" required placeholder="Ej. 68 kg"></div>
+          <div class="field"><label>Ciclo de sueño</label><input type="text" name="sleep" required placeholder="Ej. duermo bien, insomnio, interrumpido…"></div>
+          <div class="field full"><label>Diagnóstico médico</label><input type="text" name="condition" required placeholder="Ej. dolor crónico, ansiedad, insomnio…"></div>
+          <div class="field full"><label>Medicamentos que toma</label><input type="text" name="medications" required placeholder="Si no tomas ninguno, escribe “Ninguno”"></div>
+          <div class="field"><label>Consumo de café o alcohol</label><input type="text" name="caffeineAlcohol" required placeholder="Ej. 1 café al día, ocasional, no consumo…"></div>
+          <div class="field"><label>Alergias</label><input type="text" name="allergies" required placeholder="Si no tienes, escribe “Ninguna”"></div>
+
           <div class="field full consent">
             <input type="checkbox" id="consent" required>
             <label for="consent">Autorizo que esta información se comparta con Marisol Zepeda Janet únicamente para fines de esta consulta.</label>

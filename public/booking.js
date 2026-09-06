@@ -126,10 +126,12 @@
       email: fd.get('email').trim(),
       phone: fd.get('phone').trim(),
       age: fd.get('age') ? Number(fd.get('age')) : null,
+      weight: fd.get('weight').trim(),
       condition: fd.get('condition').trim(),
       medications: fd.get('medications').trim(),
+      sleep: fd.get('sleep').trim(),
+      caffeineAlcohol: fd.get('caffeineAlcohol').trim(),
       allergies: fd.get('allergies').trim(),
-      notes: fd.get('notes').trim(),
     };
 
     el.submitBtn.disabled = true;

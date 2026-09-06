@@ -42,10 +42,11 @@ app.post('/api/book', async (req, res) => {
   try {
     const {
       start, end, name, email, phone,
-      age, condition, medications, allergies, notes,
+      age, weight, condition, medications, sleep, caffeineAlcohol, allergies,
     } = req.body || {};
 
-    if (!start || !end || !name || !email || !phone || !condition) {
+    if (!start || !end || !name || !email || !phone || !age || !weight
+      || !condition || !medications || !sleep || !caffeineAlcohol || !allergies) {
       return res.status(400).json({ error: 'Faltan datos obligatorios del formulario.' });
     }
     if (!EMAIL_RE.test(email)) {
@@ -68,19 +69,21 @@ app.post('/api/book', async (req, res) => {
       description: [
         `Paciente: ${name}`,
         `Teléfono: ${phone}`,
-        `Motivo de consulta: ${condition}`,
-        medications ? `Medicamentos actuales: ${medications}` : null,
-        allergies ? `Alergias: ${allergies}` : null,
-        notes ? `Notas adicionales: ${notes}` : null,
-      ].filter(Boolean).join('\n'),
+        `Edad: ${age}`,
+        `Peso: ${weight}`,
+        `Diagnóstico médico: ${condition}`,
+        `Medicamentos que toma: ${medications}`,
+        `Ciclo de sueño: ${sleep}`,
+        `Consumo de café o alcohol: ${caffeineAlcohol}`,
+        `Alergias: ${allergies}`,
+      ].join('\n'),
       attendeeEmail: email,
       attendeeName: name,
     });
 
     await db.savePatient({
-      name, email, phone, age: age || null, condition,
-      medications: medications || null, allergies: allergies || null,
-      notes: notes || null, start, end, eventId: event.id,
+      name, email, phone, age, weight, condition, medications,
+      sleep, caffeineAlcohol, allergies, start, end, eventId: event.id,
     });
 
     res.json({ ok: true, start, end });

@@ -46,7 +46,7 @@
       <table>
         <thead>
           <tr>
-            <th>Cita</th><th>Nombre</th><th>Contacto</th><th>Motivo</th><th>Medicamentos / Alergias</th><th>Notas</th>
+            <th>Cita</th><th>Nombre</th><th>Contacto</th><th>Edad / Peso</th><th>Diagnóstico</th><th>Medicamentos</th><th>Sueño</th><th>Café / alcohol</th><th>Alergias</th>
           </tr>
         </thead>
         <tbody id="rows"></tbody>
@@ -81,17 +81,20 @@
     document.getElementById('count').textContent = `${patients.length} paciente${patients.length === 1 ? '' : 's'} registrado${patients.length === 1 ? '' : 's'}.`;
     const rows = document.getElementById('rows');
     if (patients.length === 0) {
-      rows.innerHTML = '<tr><td colspan="6" class="empty">Todavía no hay pacientes agendados.</td></tr>';
+      rows.innerHTML = '<tr><td colspan="9" class="empty">Todavía no hay pacientes agendados.</td></tr>';
       return;
     }
     rows.innerHTML = patients.map(p => `
       <tr>
         <td>${new Date(p.start).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-        <td>${escapeHtml(p.name)}${p.age ? `<div class="muted">${p.age} años</div>` : ''}</td>
+        <td>${escapeHtml(p.name)}</td>
         <td>${escapeHtml(p.email)}<div class="muted">${escapeHtml(p.phone)}</div></td>
+        <td>${p.age} años<div class="muted">${escapeHtml(p.weight)}</div></td>
         <td>${escapeHtml(p.condition)}</td>
-        <td>${p.medications ? escapeHtml(p.medications) : '<span class="muted">—</span>'}${p.allergies ? `<div class="muted">Alergias: ${escapeHtml(p.allergies)}</div>` : ''}</td>
-        <td>${p.notes ? escapeHtml(p.notes) : '<span class="muted">—</span>'}</td>
+        <td>${escapeHtml(p.medications)}</td>
+        <td>${escapeHtml(p.sleep)}</td>
+        <td>${escapeHtml(p.caffeineAlcohol)}</td>
+        <td>${escapeHtml(p.allergies)}</td>
       </tr>
     `).join('');
   }
