@@ -197,17 +197,39 @@
   /* ================= SOBRE MARISOL ================= */
   .about{ padding:120px 0; }
   .about-grid{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:72px; align-items:center; }
+
+  .portrait-stage{ position:relative; max-width:400px; margin:0 auto; transition:transform .5s var(--ease); transform-style:preserve-3d; }
+  .portrait-frame{ position:relative; aspect-ratio:4/5; }
+  .portrait-frame::before{
+    content:""; position:absolute; inset:-16%; z-index:0; border-radius:50%;
+    background:radial-gradient(closest-side, rgba(196,138,62,0.32), rgba(30,59,44,0.12) 55%, transparent 78%);
+    filter:blur(20px);
+  }
+  .portrait-photo{
+    position:relative; z-index:1; width:100%; height:100%; object-fit:cover; object-position:50% 22%;
+    -webkit-mask-image: radial-gradient(circle at 50% 38%, #000 0%, #000 52%, transparent 76%);
+            mask-image: radial-gradient(circle at 50% 38%, #000 0%, #000 52%, transparent 76%);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    -webkit-mask-position: center; mask-position: center;
+  }
+
+  .cert-badge{ position:absolute; right:-8%; bottom:-2%; width:44%; max-width:180px; z-index:2; }
   .cert-frame{
-    position:relative; padding:14px; background:#fff; border:1px solid var(--line);
+    position:relative; padding:10px; background:#fff; border:1px solid var(--line);
     box-shadow:0 30px 60px -30px rgba(30,59,44,0.35);
-    transform:rotate(-2deg); transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+    transform:rotate(4deg); transition:transform .5s var(--ease), box-shadow .5s var(--ease);
   }
   .cert-frame:hover{ transform:rotate(0deg) translateY(-4px); box-shadow:0 40px 70px -30px rgba(30,59,44,0.45); }
-  .cert-frame img{ width:100%; height:auto; }
+  .cert-frame img{ width:100%; height:auto; display:block; }
   .cert-caption{
-    font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase;
-    color:var(--green); opacity:0.65; margin-top:16px; text-align:center;
+    font-size:0.66rem; letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--green); opacity:0.65; margin-top:10px; text-align:center;
   }
+
+  @media (max-width:860px){ .portrait-stage{ max-width:300px; } }
+  @media (prefers-reduced-motion: reduce){ .portrait-stage{ transform:none !important; } }
+
   .section-eyebrow{
     font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--amber); margin-bottom:16px; display:block;
@@ -429,10 +451,17 @@
 <section class="about" id="sobre-marisol">
   <div class="wrap about-grid">
     <div class="reveal">
-      <div class="cert-frame">
-        <img src="diploma.jpeg" alt="Diploma de Marisol Zepeda Janet, Diplomado en Medicina Cannábica, AMEDCANN">
+      <div class="portrait-stage" id="portrait-stage">
+        <div class="portrait-frame">
+          <img class="portrait-photo" src="marisol.jpeg" alt="Retrato de Marisol Zepeda Janet, especialista en medicina cannábica">
+        </div>
+        <div class="cert-badge">
+          <div class="cert-frame">
+            <img src="diploma.jpeg" alt="Diploma de Marisol Zepeda Janet, Diplomado en Medicina Cannábica, AMEDCANN">
+          </div>
+          <div class="cert-caption">AMEDCANN · 120 hrs</div>
+        </div>
       </div>
-      <div class="cert-caption">Diplomado en Medicina Cannábica · AMEDCANN</div>
     </div>
     <div class="reveal">
       <span class="section-eyebrow">Sobre Marisol</span>
@@ -692,6 +721,28 @@
     };
     tl.add('.brand-mark-ripple-1', { duration: CYCLE, keyframes: rippleKeyframes }, 0);
     tl.add('.brand-mark-ripple-2', { duration: CYCLE, keyframes: rippleKeyframes }, 90);
+  })();
+
+  // retrato de Marisol: leve inclinacion 3D siguiendo el mouse (solo con puntero fino y sin reduced-motion)
+  (function () {
+    const stage = document.getElementById('portrait-stage');
+    const section = document.getElementById('sobre-marisol');
+    if (!stage || !section) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    if (reduceMotion || !finePointer) return;
+
+    section.addEventListener('mousemove', (e) => {
+      const rect = stage.getBoundingClientRect();
+      const dx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+      const dy = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+      const rotY = Math.max(-1, Math.min(1, dx)) * 7;
+      const rotX = Math.max(-1, Math.min(1, dy)) * -7;
+      stage.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+    section.addEventListener('mouseleave', () => {
+      stage.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+    });
   })();
 
   // panel de control oculto: 5 clics en el punto del pie de página lo revela
