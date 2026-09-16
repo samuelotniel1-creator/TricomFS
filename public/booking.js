@@ -1,27 +1,33 @@
 (function () {
   const DOW = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
   const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const HOURS = [9, 10, 11, 12, 13, 14, 15, 16];
 
   const state = {
-    availability: [],
-    selectedDay: null,
+    year: null,
+    month: null,
     selectedSlot: null,
+    selectedDate: null,
   };
 
   const el = {
     loading: document.getElementById('bk-loading'),
-    daysWrap: document.getElementById('bk-days-wrap'),
-    dayList: document.getElementById('day-list'),
-    slotsWrap: document.getElementById('slots-wrap'),
-    slotList: document.getElementById('slot-list'),
-    backToDays: document.getElementById('back-to-days'),
-    backToSlots: document.getElementById('back-to-slots'),
-    panelDays: document.getElementById('panel-days'),
+    calWrap: document.getElementById('bk-cal-wrap'),
+    calPrev: document.getElementById('cal-prev'),
+    calNext: document.getElementById('cal-next'),
+    calMonthLabel: document.getElementById('cal-month-label'),
+    calTableWrap: document.querySelector('.cal-table-wrap'),
+    calTableHead: document.getElementById('cal-table-head'),
+    calTableBody: document.getElementById('cal-table-body'),
+    calEmpty: document.getElementById('cal-empty'),
     panelForm: document.getElementById('panel-form'),
     panelConfirm: document.getElementById('panel-confirm'),
+    backToSlots: document.getElementById('back-to-slots'),
     step1: document.getElementById('bk-step-1'),
     step2: document.getElementById('bk-step-2'),
     step3: document.getElementById('bk-step-3'),
+    panelDays: document.getElementById('panel-days'),
     selectedSlotPill: document.getElementById('selected-slot-pill'),
     form: document.getElementById('patient-form'),
     submitBtn: document.getElementById('submit-btn'),
@@ -32,6 +38,28 @@
   };
 
   function pad(n) { return String(n).padStart(2, '0'); }
+
+  function fmtTime(iso) {
+    const d = new Date(iso);
+    return d.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+  function fmtDay(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    return { dow: DOW[d.getDay()], num: d.getDate() };
+  }
+  function fmtFull(dateStr, iso) {
+    const d = new Date(dateStr + 'T12:00:00');
+    return `${DOW[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]} · ${fmtTime(iso)}`;
+  }
+
+  function showPanel(name) {
+    [el.panelDays, el.panelForm, el.panelConfirm].forEach((p) => p.classList.remove('active'));
+    [el.step1, el.step2, el.step3].forEach((s) => { s.innerHTML = s.innerHTML.replace(/<b>|<\/b>/g, ''); });
+    if (name === 'days') { el.panelDays.classList.add('active'); el.step1.innerHTML = '<b>1</b> Horario'; }
+    if (name === 'form') { el.panelForm.classList.add('active'); el.step2.innerHTML = '<b>2</b> Tu historial'; }
+    if (name === 'confirm') { el.panelConfirm.classList.add('active'); el.step3.innerHTML = '<b>3</b> Confirmación'; }
+  }
+
   function toCompactUTC(iso) {
     const d = new Date(iso);
     return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate())
@@ -67,88 +95,93 @@
     return { gcalUrl, icsUrl };
   }
 
-  function fmtTime(iso) {
-    const d = new Date(iso);
-    return d.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
-  }
-  function fmtDay(dateStr) {
-    const d = new Date(dateStr + 'T12:00:00');
-    return { dow: DOW[d.getDay()], num: d.getDate(), month: MONTHS[d.getMonth()] };
-  }
-  function fmtFull(dateStr, iso) {
-    const d = new Date(dateStr + 'T12:00:00');
-    return `${DOW[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]} · ${fmtTime(iso)}`;
-  }
+  async function loadMonth(year, month) {
+    el.calWrap.style.display = 'none';
+    el.loading.style.display = 'block';
+    el.loading.textContent = 'Consultando disponibilidad real del calendario…';
 
-  function showPanel(name) {
-    [el.panelDays, el.panelForm, el.panelConfirm].forEach(p => p.classList.remove('active'));
-    [el.step1, el.step2, el.step3].forEach(s => s.innerHTML = s.innerHTML.replace(/<b>|<\/b>/g, ''));
-    if (name === 'days') { el.panelDays.classList.add('active'); }
-    if (name === 'form') { el.panelForm.classList.add('active'); el.step2.innerHTML = '<b>2</b> Tu historial'; }
-    if (name === 'confirm') { el.panelConfirm.classList.add('active'); el.step3.innerHTML = '<b>3</b> Confirmación'; }
-    if (name === 'days') { el.step1.innerHTML = '<b>1</b> Horario'; }
-  }
-
-  async function loadAvailability() {
     try {
-      const res = await fetch('/api/availability');
+      const qs = (year && month) ? `?year=${year}&month=${month}` : '';
+      const res = await fetch('/api/availability' + qs);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      state.availability = data.availability || [];
-      renderDays();
+      state.year = data.year;
+      state.month = data.month;
+      renderMonth(data);
     } catch (err) {
       el.loading.textContent = 'No pudimos consultar la disponibilidad en este momento. Intenta más tarde o escríbenos directamente.';
     }
   }
 
-  function renderDays() {
-    el.loading.style.display = 'none';
-    el.daysWrap.style.display = 'block';
+  function cellHtml(slot) {
+    const time = fmtTime(slot.start);
+    if (slot.status === 'free') {
+      return `<td><button type="button" class="cal-slot-btn" data-start="${slot.start}" data-end="${slot.end}">${time}</button></td>`;
+    }
+    if (slot.status === 'booked') {
+      return `<td><button type="button" class="cal-slot-btn booked" disabled>${time}</button></td>`;
+    }
+    return `<td><button type="button" class="cal-slot-btn past" disabled>${time}</button></td>`;
+  }
 
-    if (state.availability.length === 0) {
-      el.dayList.innerHTML = '<p style="opacity:.6">No hay horarios disponibles por ahora. Vuelve a intentarlo más tarde.</p>';
+  function renderMonth(data) {
+    el.loading.style.display = 'none';
+    el.calWrap.style.display = 'block';
+
+    const label = `${MONTH_NAMES[data.month - 1]} ${data.year}`;
+    el.calMonthLabel.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    el.calPrev.disabled = !data.canGoPrev;
+    el.calNext.disabled = !data.canGoNext;
+
+    if (!data.days || data.days.length === 0) {
+      el.calTableWrap.style.display = 'none';
+      el.calEmpty.style.display = 'block';
       return;
     }
+    el.calTableWrap.style.display = 'block';
+    el.calEmpty.style.display = 'none';
 
-    el.dayList.innerHTML = '';
-    state.availability.forEach((day) => {
-      const { dow, num, month } = fmtDay(day.date);
-      const btn = document.createElement('button');
-      btn.className = 'day-btn';
-      btn.type = 'button';
-      btn.innerHTML = `<span class="dow">${dow} · ${month}</span><span class="dnum">${num}</span><span class="dcount">${day.slots.length} horario${day.slots.length === 1 ? '' : 's'}</span>`;
-      btn.addEventListener('click', () => selectDay(day, btn));
-      el.dayList.appendChild(btn);
-    });
+    el.calTableHead.innerHTML = data.days.map((day) => {
+      const { dow, num } = fmtDay(day.date);
+      return `<th data-date="${day.date}">${dow}<span class="cal-day-num">${num}</span></th>`;
+    }).join('');
+
+    el.calTableBody.innerHTML = HOURS.map((_, rowIdx) => {
+      const cells = data.days.map((day) => cellHtml(day.slots[rowIdx] || { status: 'past', start: '', end: '' })
+        .replace('<td>', `<td data-date="${day.date}">`)).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
   }
 
-  function selectDay(day, btn) {
-    state.selectedDay = day;
-    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('sel'));
+  el.calTableBody.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cal-slot-btn');
+    if (!btn || btn.disabled) return;
+    document.querySelectorAll('.cal-slot-btn.sel').forEach((b) => b.classList.remove('sel'));
     btn.classList.add('sel');
 
-    el.slotsWrap.style.display = 'block';
-    el.slotList.innerHTML = '';
-    day.slots.forEach((slot) => {
-      const sbtn = document.createElement('button');
-      sbtn.className = 'slot-btn';
-      sbtn.type = 'button';
-      sbtn.textContent = fmtTime(slot.start);
-      sbtn.addEventListener('click', () => selectSlot(slot, sbtn));
-      el.slotList.appendChild(sbtn);
-    });
-    el.slotsWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+    const start = btn.getAttribute('data-start');
+    const end = btn.getAttribute('data-end');
+    const date = btn.closest('td').getAttribute('data-date');
+    state.selectedSlot = { start, end };
+    state.selectedDate = date;
 
-  function selectSlot(slot, btn) {
-    state.selectedSlot = slot;
-    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('sel'));
-    btn.classList.add('sel');
-    el.selectedSlotPill.innerHTML = `Horario elegido: <b>${fmtFull(state.selectedDay.date, slot.start)}</b>`;
+    el.selectedSlotPill.innerHTML = `Horario elegido: <b>${fmtFull(date, start)}</b>`;
     showPanel('form');
-  }
+  });
 
-  el.backToDays.addEventListener('click', () => { el.slotsWrap.style.display = 'none'; });
+  el.calPrev.addEventListener('click', () => {
+    let { year, month } = state;
+    month -= 1;
+    if (month < 1) { month = 12; year -= 1; }
+    loadMonth(year, month);
+  });
+  el.calNext.addEventListener('click', () => {
+    let { year, month } = state;
+    month += 1;
+    if (month > 12) { month = 1; year += 1; }
+    loadMonth(year, month);
+  });
+
   el.backToSlots.addEventListener('click', () => showPanel('days'));
 
   el.form.addEventListener('submit', async (e) => {
@@ -184,7 +217,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'No se pudo agendar la cita.');
 
-      el.confirmDetail.textContent = `Quedaste agendada/o el ${fmtFull(state.selectedDay.date, payload.start)}. Te llegó una invitación a ${payload.email} — acéptala, o usa uno de los botones de abajo para guardarlo en tu calendario.`;
+      el.confirmDetail.textContent = `Quedaste agendada/o el ${fmtFull(state.selectedDate, payload.start)}. Te llegó una invitación a ${payload.email} — acéptala, o usa uno de los botones de abajo para guardarlo en tu calendario.`;
       const { gcalUrl, icsUrl } = buildCalendarLinks({ start: payload.start, end: payload.end });
       el.addGoogleCal.href = gcalUrl;
       el.addIcsCal.href = icsUrl;
@@ -192,7 +225,7 @@
     } catch (err) {
       el.formError.textContent = err.message;
       if (err.message && err.message.includes('ya no está disponible')) {
-        await loadAvailability();
+        await loadMonth(state.year, state.month);
       }
     } finally {
       el.submitBtn.disabled = false;
@@ -200,5 +233,5 @@
     }
   });
 
-  loadAvailability();
+  loadMonth();
 })();

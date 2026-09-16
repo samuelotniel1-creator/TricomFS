@@ -30,8 +30,13 @@ app.get('/auth/callback', async (req, res) => {
 
 app.get('/api/availability', async (req, res) => {
   try {
-    const availability = await calendar.getAvailability();
-    res.json({ availability });
+    const year = Number.parseInt(req.query.year, 10);
+    const month = Number.parseInt(req.query.month, 10);
+    const data = await calendar.getMonthAvailability(
+      Number.isInteger(year) ? year : undefined,
+      Number.isInteger(month) ? month : undefined
+    );
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(503).json({ error: err.message });
@@ -52,12 +57,12 @@ app.post('/api/book', async (req, res) => {
     if (!EMAIL_RE.test(email)) {
       return res.status(400).json({ error: 'El correo no es válido.' });
     }
+    if (!calendar.isValidBookableSlot(start, end)) {
+      return res.status(400).json({ error: 'Ese horario no es válido.' });
+    }
 
     // Verificar que el horario siga libre (evita choques si dos personas agendan a la vez)
-    const availability = await calendar.getAvailability();
-    const stillFree = availability.some((day) =>
-      day.slots.some((slot) => slot.start === start && slot.end === end)
-    );
+    const stillFree = await calendar.isSlotStillFree(start, end);
     if (!stillFree) {
       return res.status(409).json({ error: 'Ese horario ya no está disponible. Elige otro.' });
     }
