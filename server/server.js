@@ -119,9 +119,15 @@ app.patch('/api/patients/:id/notes', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Tricom FS corriendo en http://localhost:${PORT}`);
-  console.log(calendar.isConnected()
-    ? 'Calendario de Google ya conectado.'
-    : 'Calendario NO conectado todavía — visita /auth una vez para autorizarlo.');
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Tricom FS corriendo en http://localhost:${PORT}`);
+    calendar.isConnected()
+      .then((connected) => console.log(connected
+        ? 'Calendario de Google ya conectado.'
+        : 'Calendario NO conectado todavía — visita /auth una vez para autorizarlo.'))
+      .catch((err) => console.log('No se pudo verificar el estado del calendario:', err.message));
+  });
+}
+
+module.exports = app;

@@ -23,3 +23,13 @@ create table if not exists patients (
 -- El servidor accede con la Service Role Key (nunca se expone al navegador),
 -- así que Row Level Security puede quedar activo y cerrado por defecto.
 alter table patients enable row level security;
+
+-- Guarda el token OAuth de Google Calendar (necesario en Vercel: el sistema de
+-- archivos ahí es efímero y no puede guardar tokens.json entre invocaciones).
+create table if not exists google_tokens (
+  id text primary key,
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table google_tokens enable row level security;

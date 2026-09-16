@@ -1,8 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const { google } = require('googleapis');
+const tokensStore = require('./tokens-store');
 
-const TOKENS_FILE = path.join(__dirname, 'tokens.json');
 const CALENDAR_ID = process.env.CALENDAR_ID || 'primary';
 const TIMEZONE = 'America/Mexico_City';
 
@@ -33,24 +31,24 @@ function getAuthUrl() {
 async function saveTokensFromCode(code) {
   const client = buildOAuthClient();
   const { tokens } = await client.getToken(code);
-  fs.writeFileSync(TOKENS_FILE, JSON.stringify(tokens, null, 2), 'utf8');
+  await tokensStore.write(tokens);
   return tokens;
 }
 
-function isConnected() {
-  return fs.existsSync(TOKENS_FILE);
+async function isConnected() {
+  return Boolean(await tokensStore.read());
 }
 
-function getAuthorizedClient() {
-  if (!isConnected()) {
+async function getAuthorizedClient() {
+  const tokens = await tokensStore.read();
+  if (!tokens) {
     throw new Error('Calendario no conectado todavía. Visita /auth para autorizarlo.');
   }
   const client = buildOAuthClient();
-  const tokens = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf8'));
   client.setCredentials(tokens);
   client.on('tokens', (newTokens) => {
     const merged = { ...tokens, ...newTokens };
-    fs.writeFileSync(TOKENS_FILE, JSON.stringify(merged, null, 2), 'utf8');
+    tokensStore.write(merged).catch((err) => console.error('No se pudo guardar el token renovado:', err));
   });
   return client;
 }
@@ -79,7 +77,7 @@ function upcomingBusinessDays() {
 }
 
 async function getAvailability() {
-  const client = getAuthorizedClient();
+  const client = await getAuthorizedClient();
   const calendar = google.calendar({ version: 'v3', auth: client });
 
   const days = upcomingBusinessDays();
@@ -120,7 +118,7 @@ async function getAvailability() {
 }
 
 async function createEvent({ start, end, summary, description, attendeeEmail, attendeeName }) {
-  const client = getAuthorizedClient();
+  const client = await getAuthorizedClient();
   const calendar = google.calendar({ version: 'v3', auth: client });
 
   const event = await calendar.events.insert({
