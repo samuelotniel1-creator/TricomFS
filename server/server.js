@@ -105,6 +105,20 @@ app.get('/api/patients', async (req, res) => {
   }
 });
 
+app.patch('/api/patients/:id/notes', async (req, res) => {
+  if (!process.env.ADMIN_KEY || req.query.key !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'No autorizado.' });
+  }
+  try {
+    const { notes } = req.body || {};
+    const patient = await db.updatePatientNotes(req.params.id, typeof notes === 'string' ? notes : '');
+    res.json({ ok: true, patient });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'No se pudo guardar la nota.' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Tricom FS corriendo en http://localhost:${PORT}`);
   console.log(calendar.isConnected()

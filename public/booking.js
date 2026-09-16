@@ -27,7 +27,45 @@
     submitBtn: document.getElementById('submit-btn'),
     formError: document.getElementById('form-error'),
     confirmDetail: document.getElementById('confirm-detail'),
+    addGoogleCal: document.getElementById('add-google-cal'),
+    addIcsCal: document.getElementById('add-ics-cal'),
   };
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function toCompactUTC(iso) {
+    const d = new Date(iso);
+    return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate())
+      + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+  }
+
+  function buildCalendarLinks({ start, end }) {
+    const summary = 'Consulta CBD — Tricom FS';
+    const details = 'Consulta con Marisol Zepeda Janet — Tricom FS. Revisa tu correo para más detalles.';
+
+    const gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + encodeURIComponent(summary)
+      + '&dates=' + toCompactUTC(start) + '/' + toCompactUTC(end)
+      + '&details=' + encodeURIComponent(details)
+      + '&location=' + encodeURIComponent('Tricom FS');
+
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Tricom FS//Agenda//ES',
+      'BEGIN:VEVENT',
+      'UID:' + toCompactUTC(new Date().toISOString()) + '-' + Math.random().toString(36).slice(2, 8) + '@tricomfs',
+      'DTSTAMP:' + toCompactUTC(new Date().toISOString()),
+      'DTSTART:' + toCompactUTC(start),
+      'DTEND:' + toCompactUTC(end),
+      'SUMMARY:' + summary,
+      'DESCRIPTION:' + details,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    const icsUrl = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+
+    return { gcalUrl, icsUrl };
+  }
 
   function fmtTime(iso) {
     const d = new Date(iso);
@@ -146,7 +184,10 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'No se pudo agendar la cita.');
 
-      el.confirmDetail.textContent = `Quedaste agendada/o el ${fmtFull(state.selectedDay.date, payload.start)}. Te llegó una invitación a ${payload.email} — acéptala para que se agregue a tu propio calendario.`;
+      el.confirmDetail.textContent = `Quedaste agendada/o el ${fmtFull(state.selectedDay.date, payload.start)}. Te llegó una invitación a ${payload.email} — acéptala, o usa uno de los botones de abajo para guardarlo en tu calendario.`;
+      const { gcalUrl, icsUrl } = buildCalendarLinks({ start: payload.start, end: payload.end });
+      el.addGoogleCal.href = gcalUrl;
+      el.addIcsCal.href = icsUrl;
       showPanel('confirm');
     } catch (err) {
       el.formError.textContent = err.message;

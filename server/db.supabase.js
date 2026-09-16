@@ -22,6 +22,7 @@ function fromRow(row) {
     start: row.start_time,
     end: row.end_time,
     eventId: row.event_id,
+    notes: row.notes || '',
   };
 }
 
@@ -60,4 +61,16 @@ async function getPatients() {
   return data.map(fromRow);
 }
 
-module.exports = { savePatient, getPatients };
+async function updatePatientNotes(id, notes) {
+  const { data, error } = await supabase
+    .from('patients')
+    .update({ notes })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new Error(`Supabase: ${error.message}`);
+  return fromRow(data);
+}
+
+module.exports = { savePatient, getPatients, updatePatientNotes };

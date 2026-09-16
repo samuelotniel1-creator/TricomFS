@@ -16,7 +16,8 @@ create table if not exists patients (
   allergies text not null,
   start_time timestamptz not null,
   end_time timestamptz not null,
-  event_id text
+  event_id text,
+  notes text not null default ''
 );
 
 -- El servidor accede con la Service Role Key (nunca se expone al navegador),

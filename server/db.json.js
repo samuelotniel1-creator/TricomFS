@@ -19,6 +19,7 @@ async function savePatient(patient) {
   const record = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     createdAt: new Date().toISOString(),
+    notes: '',
     ...patient,
   };
   patients.push(record);
@@ -30,4 +31,13 @@ async function getPatients() {
   return readAll().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
-module.exports = { savePatient, getPatients };
+async function updatePatientNotes(id, notes) {
+  const patients = readAll();
+  const idx = patients.findIndex((p) => p.id === id);
+  if (idx === -1) throw new Error('Paciente no encontrado.');
+  patients[idx].notes = notes;
+  writeAll(patients);
+  return patients[idx];
+}
+
+module.exports = { savePatient, getPatients, updatePatientNotes };

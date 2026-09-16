@@ -11,12 +11,16 @@
   body{ margin:0; background:var(--cream); font-family:'Work Sans',sans-serif; color:#26241D; }
   header{ background:var(--green); color:var(--cream); padding:22px 28px; }
   header h1{ font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; margin:0; }
-  .wrap{ max-width:1000px; margin:0 auto; padding:32px 28px 60px; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:32px 28px 60px; }
 
   .gate{ max-width:380px; margin:80px auto; text-align:center; }
   .gate input{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:1rem; margin:16px 0; }
   .gate button{ width:100%; padding:12px; border:none; border-radius:999px; background:var(--amber); color:var(--green-deep); font-weight:600; cursor:pointer; }
   .gate p.err{ color:#a13d2d; font-size:0.86rem; }
+
+  .admin-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+  #search-input{ flex:1 1 320px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; font-family:'Work Sans',sans-serif; font-size:0.92rem; }
+  .count{ opacity:0.7; font-size:0.9rem; white-space:nowrap; }
 
   table{ width:100%; border-collapse:collapse; font-size:0.9rem; background:#fff; }
   th, td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
@@ -25,7 +29,11 @@
   .muted{ opacity:0.6; }
   .empty{ opacity:0.6; padding:40px 0; text-align:center; }
   .table-wrap{ overflow-x:auto; border-radius:10px; border:1px solid var(--line); }
-  .count{ margin-bottom:16px; opacity:0.7; font-size:0.9rem; }
+  .notes-cell{ min-width:180px; }
+  .notes-input{ width:100%; font-family:'Work Sans',sans-serif; font-size:0.84rem; padding:6px 8px; border:1px solid var(--line); border-radius:8px; resize:vertical; }
+  .notes-save{ margin-top:6px; font-size:0.78rem; padding:5px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  .notes-save:hover{ border-color:var(--amber); color:var(--amber); }
+  .notes-status{ margin-left:8px; font-size:0.76rem; opacity:0.7; }
 </style>
 </head>
 <body>
@@ -41,12 +49,15 @@
   </div>
 
   <div id="content" style="display:none">
-    <div class="count" id="count"></div>
+    <div class="admin-toolbar">
+      <input type="text" id="search-input" placeholder="Buscar por nombre, correo, teléfono, diagnóstico…">
+      <div class="count" id="count"></div>
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Cita</th><th>Nombre</th><th>Contacto</th><th>Edad / Peso</th><th>Diagnóstico</th><th>Medicamentos</th><th>Sueño</th><th>Café / alcohol</th><th>Alergias</th>
+            <th>Cita</th><th>Nombre</th><th>Contacto</th><th>Edad / Peso</th><th>Diagnóstico</th><th>Medicamentos</th><th>Sueño</th><th>Café / alcohol</th><th>Alergias</th><th>Notas</th>
           </tr>
         </thead>
         <tbody id="rows"></tbody>
@@ -55,61 +66,6 @@
   </div>
 </div>
 
-<script>
-  const gate = document.getElementById('gate');
-  const content = document.getElementById('content');
-  const keyInput = document.getElementById('key-input');
-  const gateErr = document.getElementById('gate-err');
-
-  async function tryLoad(key) {
-    gateErr.textContent = '';
-    try {
-      const res = await fetch('/api/patients?key=' + encodeURIComponent(key));
-      if (res.status === 401) { gateErr.textContent = 'Clave incorrecta.'; return; }
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      sessionStorage.setItem('tricom-admin-key', key);
-      render(data.patients || []);
-      gate.style.display = 'none';
-      content.style.display = 'block';
-    } catch (err) {
-      gateErr.textContent = 'No se pudo cargar el listado.';
-    }
-  }
-
-  function render(patients) {
-    document.getElementById('count').textContent = `${patients.length} paciente${patients.length === 1 ? '' : 's'} registrado${patients.length === 1 ? '' : 's'}.`;
-    const rows = document.getElementById('rows');
-    if (patients.length === 0) {
-      rows.innerHTML = '<tr><td colspan="9" class="empty">Todavía no hay pacientes agendados.</td></tr>';
-      return;
-    }
-    rows.innerHTML = patients.map(p => `
-      <tr>
-        <td>${new Date(p.start).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-        <td>${escapeHtml(p.name)}</td>
-        <td>${escapeHtml(p.email)}<div class="muted">${escapeHtml(p.phone)}</div></td>
-        <td>${p.age} años<div class="muted">${escapeHtml(p.weight)}</div></td>
-        <td>${escapeHtml(p.condition)}</td>
-        <td>${escapeHtml(p.medications)}</td>
-        <td>${escapeHtml(p.sleep)}</td>
-        <td>${escapeHtml(p.caffeineAlcohol)}</td>
-        <td>${escapeHtml(p.allergies)}</td>
-      </tr>
-    `).join('');
-  }
-
-  function escapeHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str || '';
-    return d.innerHTML;
-  }
-
-  document.getElementById('key-submit').addEventListener('click', () => tryLoad(keyInput.value));
-  keyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLoad(keyInput.value); });
-
-  const saved = sessionStorage.getItem('tricom-admin-key');
-  if (saved) tryLoad(saved);
-</script>
+<script src="admin.js"></script>
 </body>
 </html>
