@@ -283,6 +283,22 @@
     font-size:0.82rem; color:var(--ink); opacity:0.7; background:rgba(196,138,62,0.06);
   }
 
+  /* ================= COMO ACTUA EL CBD ================= */
+  .mechanism{ background:var(--cream-deep); padding:110px 0; }
+  .mechanism-head{ max-width:680px; margin-bottom:56px; }
+  .mechanism-head h2{ font-size:clamp(1.6rem,2.6vw,2.1rem); font-weight:500; }
+  .mechanism-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-bottom:40px; }
+  .mechanism-item{ position:relative; padding:0 26px 0 0; }
+  .mechanism-item + .mechanism-item{ border-left:1px solid var(--line); padding-left:26px; }
+  .mechanism-num{ font-family:'Fraunces',serif; font-size:0.95rem; color:var(--amber); margin-bottom:18px; letter-spacing:0.02em; }
+  .mechanism-item h3{ font-size:1.1rem; margin-bottom:10px; }
+  .mechanism-item p{ font-size:0.92rem; color:var(--ink); opacity:0.75; margin:0; }
+  .mechanism-summary{ max-width:64ch; color:var(--ink); opacity:0.82; font-size:1rem; margin:0; padding-top:32px; border-top:1px solid var(--line); }
+  @media (max-width:760px){
+    .mechanism-grid{ grid-template-columns:1fr; row-gap:32px; }
+    .mechanism-item + .mechanism-item{ border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:24px; }
+  }
+
   /* ================= BOOKING ================= */
   .booking{ background:var(--green); color:var(--cream); padding:120px 0; }
   .booking-head{ max-width:600px; margin-bottom:56px; }
@@ -564,6 +580,33 @@
   </div>
 </section>
 
+<section class="mechanism" id="como-actua">
+  <div class="wrap">
+    <div class="mechanism-head reveal">
+      <span class="section-eyebrow">¿Cómo actúa el CBD?</span>
+      <h2>Su efecto parte del sistema nervioso, donde interviene de tres formas principales.</h2>
+    </div>
+    <div class="mechanism-grid reveal reveal-stagger">
+      <div class="mechanism-item" style="--i:0">
+        <div class="mechanism-num">01</div>
+        <h3>Neuro desinflamante</h3>
+        <p>Ayuda a reducir la inflamación en el sistema nervioso.</p>
+      </div>
+      <div class="mechanism-item" style="--i:1">
+        <div class="mechanism-num">02</div>
+        <h3>Neuro estabilizador</h3>
+        <p>Favorece el equilibrio en la actividad del sistema nervioso.</p>
+      </div>
+      <div class="mechanism-item" style="--i:2">
+        <div class="mechanism-num">03</div>
+        <h3>Neuro protector</h3>
+        <p>Contribuye a proteger las células nerviosas.</p>
+      </div>
+    </div>
+    <p class="mechanism-summary reveal">En conjunto, estos tres efectos apoyan a que el sistema nervioso funcione mejor, lo cual influye positivamente en diversos padecimientos.</p>
+  </div>
+</section>
+
 <div class="brand-mark-divider" aria-hidden="true">
   <div class="brand-mark">
     <div class="brand-mark-pos">
@@ -793,8 +836,8 @@
     trigger.addEventListener('click', () => {
       clicks++;
       clearTimeout(timer);
-      timer = setTimeout(() => { clicks = 0; }, 2500);
-      if (clicks >= 5) {
+      timer = setTimeout(() => { clicks = 0; }, 4500);
+      if (clicks >= 4) {
         clicks = 0;
         panel.style.display = 'block';
         panel.scrollIntoView({ behavior: 'smooth' });
