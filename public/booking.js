@@ -141,14 +141,18 @@
     el.calTableWrap.style.display = 'block';
     el.calEmpty.style.display = 'none';
 
-    el.calTableHead.innerHTML = data.days.map((day) => {
+    el.calTableHead.innerHTML = data.days.map((day, idx) => {
       const { dow, num } = fmtDay(day.date);
-      return `<th data-date="${day.date}">${dow}<span class="cal-day-num">${num}</span></th>`;
+      const isNext = idx === 0 && !data.canGoPrev;
+      return `<th data-date="${day.date}" class="${isNext ? 'cal-day-next' : ''}">${dow}<span class="cal-day-tag">${isNext ? 'Próximo' : ''}</span><span class="cal-day-num">${num}</span></th>`;
     }).join('');
 
     el.calTableBody.innerHTML = HOURS.map((_, rowIdx) => {
-      const cells = data.days.map((day) => cellHtml(day.slots[rowIdx] || { status: 'past', start: '', end: '' })
-        .replace('<td>', `<td data-date="${day.date}">`)).join('');
+      const cells = data.days.map((day, idx) => {
+        const isNext = idx === 0 && !data.canGoPrev;
+        return cellHtml(day.slots[rowIdx] || { status: 'past', start: '', end: '' })
+          .replace('<td>', `<td data-date="${day.date}" class="${isNext ? 'cal-day-next' : ''}">`);
+      }).join('');
       return `<tr>${cells}</tr>`;
     }).join('');
   }
