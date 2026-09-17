@@ -149,10 +149,11 @@
   .btn-ghost{ border-color:var(--line-on-dark); color:var(--cream); }
   .btn-ghost:hover{ border-color:var(--cream); transform:translateY(-2px); }
 
-  /* --- hero visual: the real brand cortinilla (drop + logo reveal), integrated into the hero
-     rather than boxed as a card — a soft halo behind it, and its own hard edges feathered
-     with a mask, so the video's cream backdrop blends into the green instead of reading as a
-     pasted screenshot --- */
+  /* --- hero visual: the real brand animation, integrated into the hero rather than boxed
+     as a card — a soft halo behind it, and the whole rectangular edge feathered with an SVG
+     mask (an objectBoundingBox radial gradient stretches into an ellipse matching the video's
+     aspect ratio, fading all four sides — not just rounded corners) so it blends into the
+     green instead of reading as a pasted screenshot --- */
   .drop-stage{ position:relative; }
   .video-frame{
     position:relative; aspect-ratio:16/9;
@@ -165,7 +166,8 @@
   }
   .video-frame video{
     position:relative; z-index:1; width:100%; height:100%; display:block; object-fit:cover;
-    border-radius:18px; border:1px solid rgba(228,197,146,0.32);
+    mask-image: url(#hero-video-fade); mask-size: 100% 100%; mask-repeat: no-repeat;
+    -webkit-mask-image: url(#hero-video-fade); -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
   }
   @keyframes fadeIn{ to{ opacity:1; } }
 
@@ -441,9 +443,21 @@
       <p class="hero-hours">Consultas sábados y domingos, de 9:00 a 5:00 pm.</p>
     </div>
     <div class="drop-stage">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <radialGradient id="hero-video-fade-grad">
+            <stop offset="0%" stop-color="#fff"/>
+            <stop offset="58%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="hero-video-fade" maskContentUnits="objectBoundingBox">
+            <rect x="0" y="0" width="1" height="1" fill="url(#hero-video-fade-grad)"/>
+          </mask>
+        </defs>
+      </svg>
       <div class="video-frame">
-        <video autoplay muted loop playsinline aria-label="Animación de marca de Tricom FS: una gota cae y forma el logotipo">
-          <source src="media/cortinilla.mp4" type="video/mp4">
+        <video autoplay muted loop playsinline aria-label="Animación de marca de Tricom FS">
+          <source src="media/animacion.mp4" type="video/mp4">
         </video>
       </div>
     </div>
