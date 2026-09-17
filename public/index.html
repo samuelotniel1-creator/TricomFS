@@ -407,31 +407,9 @@
   .foot-top{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; padding-bottom:32px; border-bottom:1px solid var(--line-on-dark); margin-bottom:24px; }
   .foot-brand{ font-family:'Fraunces',serif; color:var(--cream); font-size:1.1rem; }
   .foot-legal{ max-width:640px; opacity:0.75; line-height:1.6; }
-  #admin-trigger{ opacity:0.55; padding:0 6px; user-select:none; }
-
-  /* ================= ADMIN (oculto) ================= */
-  #admin-panel{ background:var(--cream-deep); border-top:1px solid var(--line); padding:64px 0; }
-  #admin-panel .admin-head h2{ font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:28px; color:var(--green); }
-  #admin-panel .gate{ max-width:380px; margin:0 auto; text-align:center; }
-  #admin-panel .gate p{ opacity:0.75; }
-  #admin-panel .gate input{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:1rem; margin:16px 0; font-family:'Work Sans',sans-serif; }
-  #admin-panel .gate button{ width:100%; padding:12px; border:none; border-radius:999px; background:var(--amber); color:var(--green-deep); font-weight:600; cursor:pointer; font-family:'Work Sans',sans-serif; }
-  #admin-panel .gate p.err{ color:#a13d2d; font-size:0.86rem; }
-  #admin-panel .admin-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
-  #admin-panel #search-input{ flex:1 1 320px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; font-family:'Work Sans',sans-serif; font-size:0.92rem; }
-  #admin-panel .count{ opacity:0.7; font-size:0.86rem; white-space:nowrap; }
-  #admin-panel .table-wrap{ overflow-x:auto; border-radius:10px; border:1px solid var(--line); background:#fff; }
-  #admin-panel table{ width:100%; border-collapse:collapse; font-size:0.86rem; }
-  #admin-panel th, #admin-panel td{ text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
-  #admin-panel th{ background:var(--green); color:var(--cream); font-weight:500; position:sticky; top:0; }
-  #admin-panel tr:hover td{ background:rgba(196,138,62,0.06); }
-  #admin-panel .muted{ opacity:0.6; }
-  #admin-panel .empty{ opacity:0.6; padding:40px 0; text-align:center; }
-  #admin-panel .notes-cell{ min-width:180px; }
-  #admin-panel .notes-input{ width:100%; font-family:'Work Sans',sans-serif; font-size:0.84rem; padding:6px 8px; border:1px solid var(--line); border-radius:8px; resize:vertical; }
-  #admin-panel .notes-save{ margin-top:6px; font-size:0.78rem; padding:5px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; cursor:pointer; }
-  #admin-panel .notes-save:hover{ border-color:var(--amber); color:var(--amber); }
-  #admin-panel .notes-status{ margin-left:8px; font-size:0.76rem; opacity:0.7; }
+  .foot-bottom{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .foot-panel-link{ color:rgba(243,238,226,0.65); text-decoration:underline; text-underline-offset:2px; transition:color .2s; }
+  .foot-panel-link:hover{ color:var(--cream); }
 </style>
 </head>
 <body>
@@ -721,37 +699,12 @@
       <div class="foot-brand">Tricom FS</div>
       <div class="foot-legal">Contenido informativo, no sustituye diagnóstico ni tratamiento médico. El CBD no cura enfermedades; su uso se evalúa caso por caso en consulta con Marisol Zepeda Janet.</div>
     </div>
-    <div>© <span id="year"></span> Tricom FS. Todos los derechos reservados. <span id="admin-trigger" aria-hidden="true">·</span></div>
+    <div class="foot-bottom">
+      <span>© <span id="year"></span> Tricom FS. Todos los derechos reservados.</span>
+      <a href="admin.html" class="foot-panel-link">Panel</a>
+    </div>
   </div>
 </footer>
-
-<section id="admin-panel" style="display:none">
-  <div class="wrap">
-    <div class="admin-head"><h2>Panel de pacientes</h2></div>
-    <div class="gate" id="gate">
-      <p>Ingresa la clave de administrador para ver el listado de pacientes.</p>
-      <input type="password" id="key-input" placeholder="Clave de acceso" autocomplete="current-password">
-      <button id="key-submit">Entrar</button>
-      <p class="err" id="gate-err"></p>
-    </div>
-    <div id="content" style="display:none">
-      <div class="admin-toolbar">
-        <input type="text" id="search-input" placeholder="Buscar por nombre, correo, teléfono, diagnóstico…">
-        <div class="count" id="count"></div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Cita</th><th>Nombre</th><th>Contacto</th><th>Edad / Peso</th><th>Diagnóstico</th><th>Medicamentos</th><th>Sueño</th><th>Café / alcohol</th><th>Alergias</th><th>Notas</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
 
 <script src="vendor/anime.min.js"></script>
 <script>
@@ -825,27 +778,7 @@
       stage.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
     });
   })();
-
-  // panel de control oculto: 5 clics en el punto del pie de página lo revela
-  (function () {
-    const trigger = document.getElementById('admin-trigger');
-    const panel = document.getElementById('admin-panel');
-    if (!trigger || !panel) return;
-    let clicks = 0;
-    let timer = null;
-    trigger.addEventListener('click', () => {
-      clicks++;
-      clearTimeout(timer);
-      timer = setTimeout(() => { clicks = 0; }, 4500);
-      if (clicks >= 4) {
-        clicks = 0;
-        panel.style.display = 'block';
-        panel.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  })();
 </script>
 <script src="booking.js"></script>
-<script src="admin.js"></script>
 </body>
 </html>
