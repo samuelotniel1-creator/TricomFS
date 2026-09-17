@@ -94,16 +94,17 @@
     color:var(--cream);
     overflow:hidden;
     padding:96px 0 120px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.16);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.24);
   }
   .hero::after{
     content:""; position:absolute; inset:0; pointer-events:none;
     background:
-      linear-gradient(122deg, transparent 4%, rgba(255,255,255,0.14) 22%, rgba(255,255,255,0.38) 30%, rgba(255,255,255,0.06) 40%, transparent 52%),
-      linear-gradient(122deg, transparent 58%, rgba(255,255,255,0.1) 68%, transparent 78%),
-      linear-gradient(to bottom, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 26%),
-      radial-gradient(46% 55% at 6% 106%, rgba(0,0,0,0.4), transparent 68%),
-      radial-gradient(30% 40% at 96% 2%, rgba(0,0,0,0.28), transparent 70%);
+      linear-gradient(122deg, transparent 2%, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.55) 29%, rgba(255,255,255,0.08) 40%, transparent 52%),
+      linear-gradient(122deg, transparent 55%, rgba(255,255,255,0.2) 66%, rgba(255,255,255,0.04) 76%, transparent 84%),
+      linear-gradient(to bottom, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 28%),
+      radial-gradient(22% 26% at 82% 8%, rgba(255,255,255,0.5), transparent 72%),
+      radial-gradient(46% 55% at 6% 106%, rgba(0,0,0,0.48), transparent 68%),
+      radial-gradient(34% 44% at 96% 2%, rgba(0,0,0,0.34), transparent 70%);
     mix-blend-mode:overlay;
   }
   .hero-plate{
@@ -199,9 +200,10 @@
   .credentials::before{
     content:""; position:absolute; inset:0; pointer-events:none;
     background:
-      linear-gradient(122deg, transparent 10%, rgba(255,255,255,0.12) 24%, rgba(255,255,255,0.28) 32%, rgba(255,255,255,0.04) 42%, transparent 54%),
-      linear-gradient(to bottom, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 60%),
-      radial-gradient(40% 90% at 100% 100%, rgba(0,0,0,0.28), transparent 70%);
+      linear-gradient(122deg, transparent 6%, rgba(255,255,255,0.2) 22%, rgba(255,255,255,0.46) 30%, rgba(255,255,255,0.06) 42%, transparent 54%),
+      linear-gradient(122deg, transparent 60%, rgba(255,255,255,0.14) 70%, transparent 80%),
+      linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0) 65%),
+      radial-gradient(40% 90% at 100% 100%, rgba(0,0,0,0.34), transparent 70%);
     mix-blend-mode:overlay;
   }
   .credentials > .wrap{ position:relative; z-index:1; }
@@ -323,14 +325,16 @@
   }
 
   /* ================= BOOKING ================= */
-  .booking{ position:relative; background:var(--green); color:var(--cream); padding:120px 0; overflow:hidden; box-shadow:inset 0 1px 0 rgba(255,255,255,0.14); }
+  .booking{ position:relative; background:var(--green); color:var(--cream); padding:120px 0; overflow:hidden; box-shadow:inset 0 1px 0 rgba(255,255,255,0.22); }
   .booking::before{
     content:""; position:absolute; inset:0; pointer-events:none;
     background:
-      linear-gradient(122deg, transparent 6%, rgba(255,255,255,0.1) 22%, rgba(255,255,255,0.26) 30%, rgba(255,255,255,0.04) 40%, transparent 52%),
-      linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 22%),
-      radial-gradient(50% 45% at 4% 104%, rgba(0,0,0,0.32), transparent 68%),
-      radial-gradient(28% 36% at 98% 4%, rgba(0,0,0,0.22), transparent 70%);
+      linear-gradient(122deg, transparent 4%, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.48) 28%, rgba(255,255,255,0.06) 38%, transparent 50%),
+      linear-gradient(122deg, transparent 55%, rgba(255,255,255,0.16) 65%, transparent 76%),
+      linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 24%),
+      radial-gradient(20% 24% at 92% 6%, rgba(255,255,255,0.42), transparent 72%),
+      radial-gradient(50% 45% at 4% 104%, rgba(0,0,0,0.42), transparent 68%),
+      radial-gradient(30% 38% at 98% 4%, rgba(0,0,0,0.28), transparent 70%);
     mix-blend-mode:overlay;
   }
   .booking > .wrap{ position:relative; z-index:1; }
@@ -440,8 +444,9 @@
   footer::before{
     content:""; position:absolute; inset:0; pointer-events:none;
     background:
-      linear-gradient(122deg, transparent 10%, rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.22) 34%, rgba(255,255,255,0.03) 44%, transparent 56%),
-      linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 40%);
+      linear-gradient(122deg, transparent 6%, rgba(255,255,255,0.18) 24%, rgba(255,255,255,0.4) 32%, rgba(255,255,255,0.05) 44%, transparent 56%),
+      linear-gradient(122deg, transparent 62%, rgba(255,255,255,0.12) 72%, transparent 82%),
+      linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 42%);
     mix-blend-mode:overlay;
   }
   footer > .wrap{ position:relative; z-index:1; }
